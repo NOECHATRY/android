@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">Voisins Connectés</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="results">Résultats</string>
+
+    <!-- Écran Principal (MainActivity) -->
+    <string name="welcome_message">Bonjour, Bertrand !</string>
+    <string name="subtitle_home">Trouvez de l\'aide à proximité</string>
+    <string name="search_hint">Rechercher un service...</string>
+    <string name="title_categories">Catégories</string>
+    <string name="title_recent_ads">Annonces récentes</string>
+
+    <!-- Catégories (Chips) -->
+    <string name="category_diy">Bricolage</string>
+    <string name="category_gardening">Jardinage</string>
+    <string name="category_lessons">Cours</string>
+    <string name="category_sport">Sport &amp; Bien-être</string>
+
+    <!-- Écran Détail Annonce -->
+    <string name="detail_title">Détail de l\'annonce</string>
+    <string name="detail_description_label">Description</string>
+    <string name="detail_exchange_cost_label">Coût de l\'échange</string>
+    <string name="detail_reserve_button">Réserver ce service</string>
+    <string name="detail_contact_button">Contacter l\'offreur</string>
+    <string name="detail_about_provider_label">À propos de l\'offreur</string>
+    <string name="detail_reviews_label">Avis</string>
+    <string name="detail_view_more">Voir plus</string>
+    <string name="detail_view_less">Voir moins</string>
+    <string name="detail_add_review_button">+ Ajouter un avis</string>
+    <string name="detail_published_on">Publié le %s</string>
+
+    <!-- Écran Ajouter Avis -->
+    <string name="add_review_title">Laisser un avis</string>
+    <string name="add_review_rating_question">Quelle note donneriez-vous ?</string>
+    <string name="add_review_detail_label">Votre avis détaillé</string>
+    <string name="add_review_hint">Décrivez votre expérience...</string>
+    <string name="add_review_publish_button">Publier l\'avis</string>
+
+    <!-- Messages et Toasts -->
+    <string name="error_empty_comment">Veuillez écrire un commentaire</string>
+    <string name="error_no_rating">Veuillez donner une note</string>
+    <string name="success_review_added">Avis ajouté !</string>
+
+    <!-- Éléments de liste (Avis) -->
+    <string name="review_default_user">Utilisateur</string>
+    <string name="review_date_recent">Il y a quelques instants</string>
+
+    <!-- Accessibilité -->
+    <string name="content_desc_add_ad">Ajouter une annonce</string>
+    <string name="content_desc_search">Icône de recherche</string>
+    <string name="content_desc_user_avatar">Photo de profil</string>
+
+    <!-- Bouton Inscription et Se Connecter -->
+    <string name="btn_register">Inscription</string>
+    <string name="btn_login">Connexion</string>
+</resources>
