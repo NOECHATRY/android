@@ -1,7 +1,10 @@
 package com.example.voisins_connectes;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,23 +16,42 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private AnnonceAdapter adapter;
-    private List<Annonce> allAnnonces; // Liste complète pour le filtrage
+    private List<Annonce> allAnnonces;
+    private TextView tvBienvenue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Vérifier si l'utilisateur est connecté
+        SharedPreferences prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
+        if (!prefs.contains("username")) {
+            // Pas de session -> redirection vers l'écran de login
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
-        // 1. Initialisation des données
-        initData();
+        // Récupérer le nom de l'utilisateur
+        String username = prefs.getString("username", "Voisin");
 
-        // 2. Initialisation de la RecyclerView
+        // Mettre à jour le message de bienvenue
+        tvBienvenue = findViewById(R.id.tv_Bienvenue);
+        tvBienvenue.setText("Bonjour, " + username + " !");
+
+        // Initialisation des données et de la vue
+        initData();
         recyclerView = findViewById(R.id.rv_voisins);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        
+        // Modification pour l'alignement de gauche à droite (Horizontal)
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        
         adapter = new AnnonceAdapter(new ArrayList<>(allAnnonces));
         recyclerView.setAdapter(adapter);
 
-        // 3. Gestion des catégories (Chips)
+        // Gestion des catégories
         ChipGroup chipGroup = findViewById(R.id.chip_group_categories);
         chipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) {
@@ -43,12 +65,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 4. Autres boutons
-        Button btnInscription = findViewById(R.id.btn_inscription);
+        // Gestion de la déconnexion
         Button btnConnexion = findViewById(R.id.btn_connexion);
-
-        btnInscription.setOnClickListener(v -> { /* Action */ });
-        btnConnexion.setOnClickListener(v -> { /* Action */ });
+        btnConnexion.setText("Déconnexion");
+        btnConnexion.setOnClickListener(v -> {
+            prefs.edit().remove("username").apply();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        });
     }
 
     private void initData() {
@@ -56,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         allAnnonces.add(new Annonce(1, "Tonte de pelouse", "Je propose mes services pour tondre votre pelouse.", 15.0, "22/05/2024", "Jardinage"));
         allAnnonces.add(new Annonce(2, "Cours de Maths", "Soutien scolaire pour niveau collège.", 20.0, "21/05/2024", "Cours"));
         allAnnonces.add(new Annonce(3, "Aide déménagement", "Besoin de bras pour porter des cartons.", 10.0, "20/05/2024", "Bricolage"));
-        allAnnonces.add(new Annonce(4, "Peinture salon", "Aide pour repeindre un mur de 10m2.", 30.0, "19/05/2024", "Bricolage"));
     }
 
     private void filterAnnonces(String categorie) {

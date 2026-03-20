@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="#FFFFFF"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:background="#FFFFFF"
         app:elevation="0dp">
 
         <LinearLayout
@@ -47,39 +47,17 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <LinearLayout
+                <Button
+                    android:id="@+id/btn_connexion"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/btn_inscription"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minWidth="0dp"
-                        android:minHeight="0dp"
-                        android:padding="8dp"
-                        android:text="@string/btn_register"
-                        android:textAllCaps="false"
-                        android:textSize="12sp" />
-
-                    <Button
-                        android:id="@+id/btn_connexion"
-                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:minWidth="0dp"
-                        android:minHeight="0dp"
-                        android:padding="8dp"
-                        android:text="@string/btn_login"
-                        android:textAllCaps="false"
-                        android:textSize="12sp"
-                        app:cornerRadius="8dp" />
-                </LinearLayout>
+                    android:text="Déconnexion"
+                    android:textAllCaps="false"
+                    android:textColor="#FF0000"
+                    android:textSize="12sp" />
             </RelativeLayout>
 
             <com.google.android.material.card.MaterialCardView
@@ -87,7 +65,9 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:cardElevation="2dp"
+                app:strokeColor="#EEEEEE"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -97,8 +77,8 @@
                     android:paddingHorizontal="12dp">
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:contentDescription="@string/content_desc_search"
                         android:src="@android:drawable/ic_menu_search"
                         app:tint="#999999" />
@@ -127,12 +107,52 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
+            <!-- Section Services Populaires -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Services populaires"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_voir_tout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:text="Voir tout →"
+                    android:textColor="#5C6BC0"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_voisins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:paddingStart="16dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_annonce" />
+
+            <!-- Catégories -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp"
                 android:text="@string/title_categories"
                 android:textSize="18sp"
@@ -141,6 +161,8 @@
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:clipToPadding="false"
                 android:scrollbars="none">
 
                 <com.google.android.material.chip.ChipGroup
@@ -183,22 +205,6 @@
                         android:text="@string/category_lessons" />
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
-
-            <TextView
-                android:id="@+id/tv_results"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="12dp"
-                android:text="@string/title_recent_ads"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_voisins"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@android:layout/simple_list_item_2" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -11,8 +11,9 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher"
-        android:layout_marginBottom="32dp"/>
+        android:src="@drawable/logo"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="Logo de l'application"/>
 
     <TextView
         android:layout_width="wrap_content"
