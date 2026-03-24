@@ -1,35 +1,65 @@
 package com.example.voisins_connectes;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.voisins_connectes.api.ApiClient;
+import com.example.voisins_connectes.api.ApiService;
+import com.example.voisins_connectes.models.Service;
 import com.google.android.material.chip.ChipGroup;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private AnnonceAdapter adapter;
-    private List<Annonce> allAnnonces; // Liste complète pour le filtrage
+    private List<Annonce> allAnnonces;
+    private TextView tvBienvenue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 🔐 Vérifier si l'utilisateur est connecté
+        SharedPreferences prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
+        if (!prefs.contains("username")) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
-        // 1. Initialisation des données
-        initData();
+        // 👋 Message de bienvenue
+        String username = prefs.getString("username", "Voisin");
+        tvBienvenue = findViewById(R.id.tv_Bienvenue);
+        tvBienvenue.setText("Bonjour, " + username + " !");
 
-        // 2. Initialisation de la RecyclerView
+        // 📦 RecyclerView
         recyclerView = findViewById(R.id.rv_voisins);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AnnonceAdapter(new ArrayList<>(allAnnonces));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        adapter = new AnnonceAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-        // 3. Gestion des catégories (Chips)
+        // 🌐 Charger les services depuis API
+        loadServicesFromApi();
+
+        // 🏷 Gestion des catégories
         ChipGroup chipGroup = findViewById(R.id.chip_group_categories);
         chipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) {
@@ -43,24 +73,63 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 4. Autres boutons
-        Button btnInscription = findViewById(R.id.btn_inscription);
+        // 🔓 Déconnexion
         Button btnConnexion = findViewById(R.id.btn_connexion);
-
-        btnInscription.setOnClickListener(v -> { /* Action */ });
-        btnConnexion.setOnClickListener(v -> { /* Action */ });
+        btnConnexion.setText("Déconnexion");
+        btnConnexion.setOnClickListener(v -> {
+            prefs.edit().remove("username").apply();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        });
     }
 
-    private void initData() {
-        allAnnonces = new ArrayList<>();
-        allAnnonces.add(new Annonce(1, "Tonte de pelouse", "Je propose mes services pour tondre votre pelouse.", 15.0, "22/05/2024", "Jardinage"));
-        allAnnonces.add(new Annonce(2, "Cours de Maths", "Soutien scolaire pour niveau collège.", 20.0, "21/05/2024", "Cours"));
-        allAnnonces.add(new Annonce(3, "Aide déménagement", "Besoin de bras pour porter des cartons.", 10.0, "20/05/2024", "Bricolage"));
-        allAnnonces.add(new Annonce(4, "Peinture salon", "Aide pour repeindre un mur de 10m2.", 30.0, "19/05/2024", "Bricolage"));
+    // 🌐 APPEL API
+    private void loadServicesFromApi() {
+
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+
+        api.getServices().enqueue(new Callback<List<Service>>() {
+            @Override
+            public void onResponse(Call<List<Service>> call, Response<List<Service>> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+
+                    List<Service> services = response.body();
+
+                    allAnnonces = new ArrayList<>();
+
+                    for (Service s : services) {
+
+                        // 🔥 Conversion Service → Annonce
+                        Annonce a = new Annonce(
+                                s.idService,
+                                s.titre,
+                                s.description,
+                                s.prixPropose,
+                                s.datePublication,
+                                "API"
+                        );
+
+                        allAnnonces.add(a);
+                    }
+
+                    adapter.setAnnonces(allAnnonces);
+                } else {
+                    Log.e("API_ERROR", "Réponse vide ou erreur");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Service>> call, Throwable t) {
+                Log.e("API_ERROR", t.getMessage());
+            }
+        });
     }
 
+    // 🔎 FILTRE
     private void filterAnnonces(String categorie) {
         List<Annonce> filteredList = new ArrayList<>();
+
         if (categorie.equals("Tout")) {
             filteredList.addAll(allAnnonces);
         } else {
@@ -70,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
         adapter.setAnnonces(filteredList);
     }
 }

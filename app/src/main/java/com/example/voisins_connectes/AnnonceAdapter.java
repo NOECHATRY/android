@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,10 +30,28 @@ public class AnnonceAdapter extends RecyclerView.Adapter<AnnonceAdapter.AnnonceV
     public void onBindViewHolder(@NonNull AnnonceViewHolder holder, int position) {
         Annonce annonce = annonceList.get(position);
         holder.tvTitre.setText(annonce.getTitre());
-        holder.tvPrix.setText(String.format("%.2f €", annonce.getPrix()));
+        holder.tvPrix.setText(String.format("%.0f crédits", annonce.getPrix()));
         holder.tvDescription.setText(annonce.getDescription());
-        holder.tvDate.setText("Publié le " + annonce.getDatePublication());
         holder.chipCategorie.setText(annonce.getCategorie());
+
+        // Gestion de l'image selon la catégorie
+        if ("Jardinage".equalsIgnoreCase(annonce.getCategorie())) {
+            holder.ivAnnonce.setImageResource(R.drawable.jardinage);
+        } else if ("Bricolage".equalsIgnoreCase(annonce.getCategorie())) {
+            holder.ivAnnonce.setImageResource(R.drawable.bricolage);
+        } else if ("Cours".equalsIgnoreCase(annonce.getCategorie())) {
+            holder.ivAnnonce.setImageResource(R.drawable.cours);
+        } else {
+            holder.ivAnnonce.setImageResource(android.R.drawable.ic_menu_gallery);
+        }
+
+        // Affichage des horaires si besoin (caché par défaut dans le nouveau design)
+        if (annonce.getHoraireReserve() != null) {
+            holder.tvHoraires.setVisibility(View.VISIBLE);
+            holder.tvHoraires.setText("✅ Réservé : " + annonce.getHoraireReserve());
+        } else {
+            holder.tvHoraires.setVisibility(View.GONE);
+        }
 
         // Gestion du clic pour ouvrir les détails
         holder.itemView.setOnClickListener(v -> {
@@ -53,7 +72,8 @@ public class AnnonceAdapter extends RecyclerView.Adapter<AnnonceAdapter.AnnonceV
     }
 
     static class AnnonceViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitre, tvPrix, tvDescription, tvDate;
+        TextView tvTitre, tvPrix, tvDescription, tvHoraires;
+        ImageView ivAnnonce;
         Chip chipCategorie;
 
         public AnnonceViewHolder(@NonNull View itemView) {
@@ -61,7 +81,8 @@ public class AnnonceAdapter extends RecyclerView.Adapter<AnnonceAdapter.AnnonceV
             tvTitre = itemView.findViewById(R.id.tv_titre_annonce);
             tvPrix = itemView.findViewById(R.id.tv_prix_annonce);
             tvDescription = itemView.findViewById(R.id.tv_description_annonce);
-            tvDate = itemView.findViewById(R.id.tv_date_annonce);
+            tvHoraires = itemView.findViewById(R.id.tv_horaires_resume);
+            ivAnnonce = itemView.findViewById(R.id.iv_annonce_image);
             chipCategorie = itemView.findViewById(R.id.chip_categorie);
         }
     }
