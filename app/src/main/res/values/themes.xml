@@ -11,4 +11,8 @@
     </style>
 
     <style name="Theme.Voisins_Connectes" parent="Base.Theme.Voisins_Connectes" />
+
+    <style name="ShapeAppearance.Circle" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

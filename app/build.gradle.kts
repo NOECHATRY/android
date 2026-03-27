@@ -36,6 +36,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    // Utilisation directe de la bibliothèque pour éviter les erreurs de catalogue
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation(libs.okhttp)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

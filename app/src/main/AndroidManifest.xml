@@ -27,6 +27,14 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
+            android:name=".ProfilActivity"
+            android:exported="false"
+            android:label="Mon Profil" />
+        <activity
+            android:name=".PublierDemandeActivity"
+            android:exported="false"
+            android:label="Publier une demande" />
+        <activity
             android:name=".AnnonceDetailActivity"
             android:exported="false"
             android:label="Détail de l'annonce"
