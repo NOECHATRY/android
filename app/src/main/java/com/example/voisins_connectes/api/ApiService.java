@@ -22,14 +22,14 @@ public interface ApiService {
     @DELETE("services/delete/{id}")
     Call<ResponseBody> deleteService(@Path("id") int id);
 
-    // MEMBRES
-    @GET("membres/list")
-    Call<List<Membre>> getMembres();
+    @FormUrlEncoded
+    @POST("membres.php")
+    Call<Membre> login(
+            @Query("action") String action,
+            @Field("email") String email,
+            @Field("motDePasse") String motDePasse
+    );
 
-    @POST("membres/add")
-    Call<ResponseBody> addMembre(@Body Membre membre);
 
-    // FORFAITS
-    @GET("forfaits/list")
-    Call<List<Forfait>> getForfaits();
+
 }

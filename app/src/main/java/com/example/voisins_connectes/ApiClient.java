@@ -1,4 +1,4 @@
-package com.example.voisins_connectes.api;
+package com.example.voisins_connectes;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

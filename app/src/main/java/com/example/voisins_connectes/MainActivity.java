@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.voisins_connectes.api.ApiClient;
 import com.example.voisins_connectes.api.ApiService;
 import com.example.voisins_connectes.models.Service;
 import com.google.android.material.chip.ChipGroup;
