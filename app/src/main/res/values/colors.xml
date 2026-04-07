@@ -2,7 +2,18 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="blue_main">#2196F3</color>
-    <color name="gray_text">#666666</color>
-    <color name="background_light">#F5F5F5</color>
+
+    <!-- Palette Site Web -->
+    <color name="vert_light">#D4E6C3</color> <!-- rgb(212,230,195) -->
+    <color name="vert_medium">#8CB46E</color> <!-- rgb(140,180,110) -->
+    <color name="vert_dark">#467832</color> <!-- rgb(70,120,50) -->
+    <color name="texte_main">#2C3E2D</color>
+    <color name="gris_main">#6B7C6B</color>
+    <color name="rouge_main">#DC2626</color>
+    <color name="rouge_light">#FEE2E2</color>
+
+    <!-- Couleurs système Android mappées -->
+    <color name="colorPrimary">@color/vert_dark</color>
+    <color name="colorPrimaryVariant">@color/vert_medium</color>
+    <color name="colorOnPrimary">@color/white</color>
 </resources>

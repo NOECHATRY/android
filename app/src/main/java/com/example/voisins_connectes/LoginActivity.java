@@ -44,8 +44,8 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         tvRegister.setOnClickListener(v -> {
-            // Pour l'instant on fait la même chose que le login pour simplifier
-            Toast.makeText(this, "Fonctionnalité d'inscription bientôt disponible", Toast.LENGTH_SHORT).show();
+            // Ouvrir la page d'inscription
+            startActivity(new Intent(this, RegisterActivity.class));
         });
     }
 }

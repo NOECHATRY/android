@@ -4,20 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/vert_light">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/vert_light"
         app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_demandes"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Demandes des voisins"
-            app:titleTextColor="#000000" />
+            app:title="Espace Demandes"
+            app:titleTextColor="@color/texte_main" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -32,11 +32,45 @@
             android:paddingBottom="60dp">
 
             <LinearLayout
-                android:id="@+id/container_toutes_demandes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp" />
+                android:padding="16dp">
+
+                <!-- SECTION 1 : MES DEMANDES (Suivi) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Suivi de mes demandes"
+                    android:textColor="@color/texte_main"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/container_mes_demandes_suivi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+
+                <!-- SECTION 2 : RENDRE SERVICE (Toutes les demandes) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="Rendre service aux voisins"
+                    android:textColor="@color/texte_main"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/container_toutes_demandes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -46,7 +80,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#FFFFFF"
+        android:background="@color/vert_light"
+        app:itemIconTint="@color/vert_dark"
+        app:itemTextColor="@color/vert_dark"
         app:menu="@menu/bottom_nav_menu"
         app:elevation="8dp" />
 

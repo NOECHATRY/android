@@ -24,12 +24,24 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".RegisterActivity"
+            android:exported="false"
+            android:label="Inscription" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".ProfilActivity"
             android:exported="false"
             android:label="Mon Profil" />
+        <activity
+            android:name=".AbonnementActivity"
+            android:exported="false"
+            android:label="Abonnement Premium" />
+        <activity
+            android:name=".DemandesVoisinsActivity"
+            android:exported="false"
+            android:label="Demandes des voisins" />
         <activity
             android:name=".PublierDemandeActivity"
             android:exported="false"

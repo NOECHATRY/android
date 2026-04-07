@@ -1,5 +1,6 @@
 package com.example.voisins_connectes;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +28,9 @@ public class PublierDemandeActivity extends AppCompatActivity {
         EditText etTitre = findViewById(R.id.et_publier_titre);
         EditText etDescription = findViewById(R.id.et_publier_description);
         EditText etCredits = findViewById(R.id.et_publier_credits);
-        ChipGroup cgCategorie = findViewById(R.id.cg_publier_categorie);
+        ChipGroup cgCategorie = findViewById(R.id.chip_group_categories); // Changement ici pour correspondre au layout
+        if (cgCategorie == null) cgCategorie = findViewById(R.id.cg_publier_categorie); // Sécurité
+        
         Button btnConfirmer = findViewById(R.id.btn_publier_confirmer);
 
         btnConfirmer.setOnClickListener(v -> {
@@ -35,9 +38,13 @@ public class PublierDemandeActivity extends AppCompatActivity {
             String description = etDescription.getText().toString().trim();
             String credits = etCredits.getText().toString().trim();
             
-            int checkedId = cgCategorie.getCheckedChipId();
+            int checkedId = -1;
+            if (findViewById(R.id.cg_publier_categorie) != null) {
+                checkedId = ((ChipGroup)findViewById(R.id.cg_publier_categorie)).getCheckedChipId();
+            }
+
             String categorie = "";
-            if (checkedId != View.NO_ID) {
+            if (checkedId != View.NO_ID && checkedId != -1) {
                 Chip chip = findViewById(checkedId);
                 categorie = chip.getText().toString();
             }
@@ -47,8 +54,11 @@ public class PublierDemandeActivity extends AppCompatActivity {
                 return;
             }
 
-            // Sauvegarder la demande dans notre gestionnaire global
-            Demande nouvelleDemande = new Demande(titre, description, categorie, credits);
+            SharedPreferences prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
+            String username = prefs.getString("username", "Voisin");
+
+            // Sauvegarder la demande avec le nom de l'auteur
+            Demande nouvelleDemande = new Demande(titre, description, categorie, credits, username);
             GestionDemandes.ajouterDemande(nouvelleDemande);
 
             Toast.makeText(this, "Votre demande a été publiée !", Toast.LENGTH_LONG).show();

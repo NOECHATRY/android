@@ -1,12 +1,26 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.Voisins_Connectes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Couleurs principales -->
-        <item name="colorPrimary">#2196F3</item>
-        <item name="colorPrimaryVariant">#1976D2</item>
+        <!-- Couleurs principales basées sur le site web -->
+        <item name="colorPrimary">@color/vert_dark</item>
+        <item name="colorPrimaryVariant">@color/vert_medium</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Statut bar transparente pour un look moderne -->
-        <item name="android:statusBarColor">#F5F5F5</item>
+
+        <!-- Couleurs secondaires et accents -->
+        <item name="colorSecondary">@color/vert_medium</item>
+        <item name="colorSecondaryVariant">@color/vert_light</item>
+        <item name="colorOnSecondary">@color/texte_main</item>
+
+        <!-- Background et texte -->
+        <item name="android:windowBackground">@color/vert_light</item>
+        <item name="android:textColorPrimary">@color/texte_main</item>
+
+        <!-- La couleur de surface (pour les CardView par défaut) reste blanche -->
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/texte_main</item>
+
+        <!-- Statut bar -->
+        <item name="android:statusBarColor">@color/vert_light</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 

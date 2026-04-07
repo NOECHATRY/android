@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="@color/vert_light">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_profil"
@@ -28,7 +28,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Bonjour, Sophie ! 👋"
-                    android:textColor="#000000"
+                    android:textColor="@color/texte_main"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Voici un aperçu de votre activité"
-                    android:textColor="#666666"
+                    android:textColor="@color/gris_main"
                     android:textSize="14sp" />
 
                 <!-- Grille de Statistiques -->
@@ -56,8 +56,9 @@
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
                         app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:strokeColor="#EEEEEE"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:strokeColor="@color/vert_medium"
                         app:strokeWidth="1dp">
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -84,7 +85,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     android:text="+5"
-                                    android:textColor="#2E7D32"
+                                    android:textColor="@color/vert_dark"
                                     android:textStyle="bold" />
                             </RelativeLayout>
                             <TextView
@@ -92,13 +93,13 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
                                 android:text="Crédits disponibles"
-                                android:textColor="#666666"
+                                android:textColor="@color/gris_main"
                                 android:textSize="12sp" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="24 crédits"
-                                android:textColor="#000000"
+                                android:textColor="@color/texte_main"
                                 android:textStyle="bold" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -110,8 +111,9 @@
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
                         app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:strokeColor="#EEEEEE"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:strokeColor="@color/vert_medium"
                         app:strokeWidth="1dp">
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -125,13 +127,13 @@
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:src="@android:drawable/ic_menu_gallery"
-                                    app:tint="#AB47BC" />
+                                    app:tint="@color/vert_medium" />
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     android:text="+12%"
-                                    android:textColor="#2E7D32"
+                                    android:textColor="@color/vert_dark"
                                     android:textStyle="bold" />
                             </RelativeLayout>
                             <TextView
@@ -139,13 +141,13 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
                                 android:text="Échanges ce mois"
-                                android:textColor="#666666"
+                                android:textColor="@color/gris_main"
                                 android:textSize="12sp" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="8 échanges"
-                                android:textColor="#000000"
+                                android:textColor="@color/texte_main"
                                 android:textStyle="bold" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -157,8 +159,9 @@
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
                         app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:strokeColor="#EEEEEE"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:strokeColor="@color/vert_medium"
                         app:strokeWidth="1dp">
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -172,13 +175,13 @@
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:src="@android:drawable/ic_menu_gallery"
-                                    app:tint="#FFA726" />
+                                    app:tint="@color/vert_dark" />
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     android:text="+0.2"
-                                    android:textColor="#2E7D32"
+                                    android:textColor="@color/vert_dark"
                                     android:textStyle="bold" />
                             </RelativeLayout>
                             <TextView
@@ -186,13 +189,13 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
                                 android:text="Évaluation moyenne"
-                                android:textColor="#666666"
+                                android:textColor="@color/gris_main"
                                 android:textSize="12sp" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="4.9 / 5.0"
-                                android:textColor="#000000"
+                                android:textColor="@color/texte_main"
                                 android:textStyle="bold" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -204,8 +207,9 @@
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
                         app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:strokeColor="#EEEEEE"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:strokeColor="@color/vert_medium"
                         app:strokeWidth="1dp">
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -219,13 +223,13 @@
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:src="@android:drawable/ic_menu_gallery"
-                                    app:tint="#26A69A" />
+                                    app:tint="@color/vert_dark" />
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     android:text="+8h"
-                                    android:textColor="#2E7D32"
+                                    android:textColor="@color/vert_dark"
                                     android:textStyle="bold" />
                             </RelativeLayout>
                             <TextView
@@ -233,13 +237,13 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
                                 android:text="Heures échangées"
-                                android:textColor="#666666"
+                                android:textColor="@color/gris_main"
                                 android:textSize="12sp" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="32 heures"
-                                android:textColor="#000000"
+                                android:textColor="@color/texte_main"
                                 android:textStyle="bold" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -255,14 +259,14 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/holo_purple"
+                        android:background="@color/vert_medium"
                         android:orientation="vertical"
                         android:padding="20dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Actions rapides"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/white"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                         <LinearLayout
@@ -286,7 +290,7 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- SECTION : Mes Demandes -->
+                <!-- SECTION : Mes Demandes Publiées -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -300,21 +304,41 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Mes demandes"
-                            android:textColor="#000000"
+                            android:text="Mes demandes publiées"
+                            android:textColor="@color/texte_main"
                             android:textSize="18sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:text="Voir tout"
-                            android:textColor="#5C6BC0"
                             android:textStyle="bold" />
                     </RelativeLayout>
 
                     <LinearLayout
                         android:id="@+id/container_mes_demandes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+
+                <!-- SECTION : Missions Acceptées -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Missions acceptées"
+                            android:textColor="@color/texte_main"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container_missions_acceptees"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
@@ -335,7 +359,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Échanges récents"
-                            android:textColor="#000000"
+                            android:textColor="@color/texte_main"
                             android:textSize="18sp"
                             android:textStyle="bold" />
                         <TextView
@@ -343,7 +367,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:text="Voir tout"
-                            android:textColor="#5C6BC0"
+                            android:textColor="@color/vert_dark"
                             android:textStyle="bold" />
                     </RelativeLayout>
 
@@ -352,7 +376,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/white"
                         app:strokeColor="#EEEEEE"
                         app:strokeWidth="1dp">
                         <RelativeLayout
@@ -375,24 +400,24 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Cours de guitare"
-                                    android:textColor="#000000"
+                                    android:textColor="@color/texte_main"
                                     android:textStyle="bold" />
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="avec Thomas Dubois"
-                                    android:textColor="#666666"
+                                    android:textColor="@color/gris_main"
                                     android:textSize="12sp" />
                             </LinearLayout>
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentEnd="true"
-                                android:background="#E8F5E9"
+                                android:background="@color/vert_light"
                                 android:paddingHorizontal="8dp"
                                 android:paddingVertical="4dp"
                                 android:text="Terminé"
-                                android:textColor="#2E7D32"
+                                android:textColor="@color/vert_dark"
                                 android:textSize="10sp" />
                             <TextView
                                 android:layout_width="wrap_content"
@@ -401,7 +426,7 @@
                                 android:layout_below="@id/iv_exch_1"
                                 android:layout_marginTop="4dp"
                                 android:text="Il y a 2 jours"
-                                android:textColor="#999999"
+                                android:textColor="@color/gris_main"
                                 android:textSize="10sp" />
                         </RelativeLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -413,7 +438,7 @@
                         android:layout_marginTop="24dp"
                         android:layout_marginBottom="12dp"
                         android:text="Prochains rendez-vous"
-                        android:textColor="#000000"
+                        android:textColor="@color/texte_main"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -422,8 +447,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="#E3F2FD">
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/white">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -433,13 +458,13 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Lundi 15 déc"
-                                android:textColor="#1565C0"
+                                android:textColor="@color/vert_dark"
                                 android:textStyle="bold" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="10:00 - Yoga avec Emma"
-                                android:textColor="#1565C0"
+                                android:textColor="@color/vert_dark"
                                 android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -455,7 +480,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#FFFFFF"
+        android:background="@color/vert_light"
+        app:itemIconTint="@color/vert_dark"
+        app:itemTextColor="@color/vert_dark"
         app:menu="@menu/bottom_nav_menu"
         app:elevation="8dp" />
 

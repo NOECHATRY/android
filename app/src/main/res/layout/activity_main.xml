@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/vert_light"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/vert_light"
         app:elevation="0dp">
 
         <LinearLayout
@@ -35,7 +35,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/welcome_message"
-                        android:textColor="@color/black"
+                        android:textColor="@color/texte_main"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -43,7 +43,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/subtitle_home"
-                        android:textColor="#666666"
+                        android:textColor="@color/gris_main"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -56,7 +56,7 @@
                     android:layout_centerVertical="true"
                     android:text="Déconnexion"
                     android:textAllCaps="false"
-                    android:textColor="#FF0000"
+                    android:textColor="@color/rouge_main"
                     android:textSize="12sp" />
             </RelativeLayout>
 
@@ -67,7 +67,8 @@
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
-                app:strokeColor="#EEEEEE"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="@color/vert_medium"
                 app:strokeWidth="1dp">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -79,7 +80,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@android:drawable/ic_menu_search"
-                        app:tint="#999999"
+                        app:tint="@color/gris_main"
                         android:contentDescription="@string/content_desc_search" />
                     <EditText
                         android:id="@+id/et_recherche"
@@ -87,6 +88,8 @@
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
                         android:hint="@string/search_hint"
+                        android:textColorHint="@color/gris_main"
+                        android:textColor="@color/texte_main"
                         android:importantForAutofill="no"
                         android:inputType="text"
                         android:paddingStart="10dp"
@@ -113,7 +116,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:checked="true"
-                        android:text="Tout" />
+                        android:text="Tout"
+                        app:chipBackgroundColor="@color/vert_medium"
+                        android:textColor="@color/white" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_bricolage"
@@ -167,7 +172,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Services populaires"
-                        android:textColor="#000000"
+                        android:textColor="@color/texte_main"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -178,7 +183,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:text="Voir tout →"
-                        android:textColor="#5C6BC0"
+                        android:textColor="@color/vert_dark"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -205,7 +210,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Demandes des voisins"
-                        android:textColor="#000000"
+                        android:textColor="@color/texte_main"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -227,7 +232,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#FFFFFF"
+        android:background="@color/vert_light"
+        app:itemIconTint="@color/vert_dark"
+        app:itemTextColor="@color/vert_dark"
         app:menu="@menu/bottom_nav_menu"
         app:elevation="8dp" />
 
@@ -240,7 +247,7 @@
         android:layout_marginBottom="80dp"
         android:contentDescription="@string/content_desc_add_ad"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#2196F3"
+        app:backgroundTint="@color/vert_dark"
         app:tint="@color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -132,8 +132,11 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 return true;
-            } else if (itemId == R.id.nav_messages) {
-                Toast.makeText(this, "Messagerie bientôt disponible", Toast.LENGTH_SHORT).show();
+            } else if (itemId == R.id.nav_requests) {
+                startActivity(new Intent(this, DemandesVoisinsActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_premium) {
+                startActivity(new Intent(this, AbonnementActivity.class));
                 return true;
             } else if (itemId == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfilActivity.class));
@@ -159,26 +162,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshDemandesVoisins(); // Rafraîchir quand on revient sur l'écran
+        refreshDemandesVoisins();
     }
 
     private void refreshDemandesVoisins() {
         if (containerDemandes == null) return;
         containerDemandes.removeAllViews();
         List<Demande> liste = GestionDemandes.getListeDemandes();
+        String monNom = prefs.getString("username", "Voisin");
 
-        if (liste.isEmpty()) {
-            TextView tvVide = new TextView(this);
-            tvVide.setText("Aucune demande de voisin pour le moment.");
-            tvVide.setPadding(0, 20, 0, 20);
-            containerDemandes.addView(tvVide);
-            return;
-        }
+        boolean hasDemandesVoisins = false;
 
         for (Demande d : liste) {
-            // On ne montre que les demandes "En attente" pour les autres voisins
-            if (!d.getStatut().equals("En attente")) continue;
+            if (!d.getStatut().equals("En attente") || d.getAuteur().equals(monNom)) continue;
 
+            hasDemandesVoisins = true;
             MaterialCardView card = new MaterialCardView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, 
@@ -199,6 +197,11 @@ public class MainActivity extends AppCompatActivity {
             titre.setTextSize(16);
             titre.setTypeface(null, android.graphics.Typeface.BOLD);
             titre.setTextColor(0xFF000000);
+
+            TextView auteur = new TextView(this);
+            auteur.setText("Par " + d.getAuteur());
+            auteur.setTextColor(0xFF1565C0);
+            auteur.setTextSize(12);
 
             TextView desc = new TextView(this);
             desc.setText(d.getDescription());
@@ -222,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                     .setMessage("Voulez-vous accepter cette demande et aider ce voisin ?")
                     .setPositiveButton("Oui, j'aide", (dialog, which) -> {
                         d.setStatut("Validée");
-                        String monNom = prefs.getString("username", "Un voisin");
+                        d.setAideur(monNom);
                         d.setReponse("Réponse de " + monNom + " : J'accepte de vous aider !");
                         Toast.makeText(this, "Merci ! Le voisin a été prévenu.", Toast.LENGTH_LONG).show();
                         refreshDemandesVoisins();
@@ -232,12 +235,20 @@ public class MainActivity extends AppCompatActivity {
             });
 
             layout.addView(titre);
+            layout.addView(auteur);
             layout.addView(desc);
             layout.addView(budget);
             layout.addView(btnRendreService);
             card.addView(layout);
 
             containerDemandes.addView(card);
+        }
+
+        if (!hasDemandesVoisins) {
+            TextView tvVide = new TextView(this);
+            tvVide.setText("Aucune demande de voisin pour le moment.");
+            tvVide.setPadding(0, 20, 0, 20);
+            containerDemandes.addView(tvVide);
         }
     }
 

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/vert_light"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="24dp">
@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Bienvenue sur Voisins Connectés"
-        android:textColor="#000000"
+        android:textColor="@color/texte_main"
         android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -29,19 +29,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Connectez-vous pour continuer"
-        android:textColor="#666666"
+        android:textColor="@color/gris_main"
         android:layout_marginBottom="40dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Nom d'utilisateur"
+        android:textColorHint="@color/gris_main"
+        app:boxBackgroundColor="@color/white"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_login_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/texte_main"
             android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -50,7 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:backgroundTint="#9C27B0"
+        android:backgroundTint="@color/vert_dark"
         android:padding="12dp"
         android:text="Se connecter"
         android:textAllCaps="false"
@@ -62,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Pas encore de compte ? S'inscrire"
-        android:textColor="#9C27B0"
+        android:textColor="@color/vert_dark"
         android:textStyle="bold" />
 
 </LinearLayout>
