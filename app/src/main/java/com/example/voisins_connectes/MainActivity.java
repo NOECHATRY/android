@@ -23,13 +23,18 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private AnnonceAdapter adapter;
-    private List<Annonce> allAnnonces;
+    private List<Annonce> allAnnonces = new ArrayList<>();
     private TextView tvBienvenue;
     private ChipGroup chipGroup;
     private EditText etRecherche;
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 1. Vérifier la session
         prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
-        if (!prefs.contains("username")) {
+        if (!prefs.contains("token")) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
@@ -67,25 +72,16 @@ public class MainActivity extends AppCompatActivity {
         String username = prefs.getString("username", "Voisin");
         tvBienvenue.setText("Bonjour, " + username + " !");
 
-        // 4. Initialisation des données et de la liste
-        initData();
+        // 4. Configuration de la liste
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        adapter = new AnnonceAdapter(new ArrayList<>(allAnnonces));
+        adapter = new AnnonceAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-        // 5. Charger les demandes des voisins
-        refreshDemandesVoisins();
+        // 5. Charger les données depuis l'API
+        chargerDonneesAPI();
 
         // 6. Configuration du Pull-to-Refresh
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            new Handler().postDelayed(() -> {
-                initData();
-                adapter.setAnnonces(new ArrayList<>(allAnnonces));
-                refreshDemandesVoisins();
-                swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(MainActivity.this, "Page actualisée", Toast.LENGTH_SHORT).show();
-            }, 1500);
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::chargerDonneesAPI);
 
         // 7. Logique de filtrage reliée à la barre de recherche
         etRecherche.addTextChangedListener(new TextWatcher() {
@@ -145,24 +141,54 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        // 10. Gestion du bouton "+" (Publication d'une demande)
-        fabPublier.setOnClickListener(v -> {
-            startActivity(new Intent(this, PublierDemandeActivity.class));
-        });
+        // 10. Gestion du bouton "+"
+        fabPublier.setOnClickListener(v -> startActivity(new Intent(this, PublierDemandeActivity.class)));
 
         // 11. Déconnexion
         Button btnConnexion = findViewById(R.id.btn_connexion);
         btnConnexion.setOnClickListener(v -> {
-            prefs.edit().remove("username").apply();
+            prefs.edit().clear().apply();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refreshDemandesVoisins();
+    private void chargerDonneesAPI() {
+        swipeRefreshLayout.setRefreshing(true);
+        RetrofitClient.getApiService().getServices().enqueue(new Callback<List<Demande>>() {
+            @Override
+            public void onResponse(Call<List<Demande>> call, Response<List<Demande>> response) {
+                swipeRefreshLayout.setRefreshing(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    allAnnonces.clear();
+                    // On convertit les 'Demande' de l'API en objets 'Annonce' pour l'adapter
+                    for (Demande d : response.body()) {
+                        // On ne montre que les OFFRES dans la section services populaires
+                        if ("offre".equals(d.getTypeService())) {
+                            Annonce a = new Annonce(d.getIdDemande(), d.getTitre(), d.getDescription(), 
+                                                  d.getBudget(), d.getDatePublication(), "Service");
+                            allAnnonces.add(a);
+                        }
+                    }
+                    adapter.setAnnonces(new ArrayList<>(allAnnonces));
+                    
+                    // On met à jour aussi les DEMANDES dans GestionDemandes
+                    GestionDemandes.getListeDemandes().clear();
+                    for (Demande d : response.body()) {
+                        if ("demande".equals(d.getTypeService())) {
+                            GestionDemandes.ajouterDemande(d);
+                        }
+                    }
+                    refreshDemandesVoisins();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Demande>> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(MainActivity.this, "Erreur API : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void refreshDemandesVoisins() {
@@ -170,17 +196,17 @@ public class MainActivity extends AppCompatActivity {
         containerDemandes.removeAllViews();
         List<Demande> liste = GestionDemandes.getListeDemandes();
         String monNom = prefs.getString("username", "Voisin");
+        int monId = prefs.getInt("idMembre", -1);
 
         boolean hasDemandesVoisins = false;
 
         for (Demande d : liste) {
-            if (!d.getStatut().equals("En attente") || d.getAuteur().equals(monNom)) continue;
+            if (!d.getEtatService().equals("open") || d.getIdMembre() == monId) continue;
 
             hasDemandesVoisins = true;
             MaterialCardView card = new MaterialCardView(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.setMargins(0, 0, 0, 16);
             card.setLayoutParams(params);
             card.setRadius(24f);
@@ -198,21 +224,10 @@ public class MainActivity extends AppCompatActivity {
             titre.setTypeface(null, android.graphics.Typeface.BOLD);
             titre.setTextColor(0xFF000000);
 
-            TextView auteur = new TextView(this);
-            auteur.setText("Par " + d.getAuteur());
-            auteur.setTextColor(0xFF1565C0);
-            auteur.setTextSize(12);
-
-            TextView desc = new TextView(this);
-            desc.setText(d.getDescription());
-            desc.setTextColor(0xFF666666);
-            desc.setPadding(0, 8, 0, 8);
-
             TextView budget = new TextView(this);
             budget.setText("Budget : " + d.getBudget() + " crédits");
             budget.setTextColor(0xFF2E7D32);
             budget.setTextSize(12);
-            budget.setPadding(0, 0, 0, 16);
 
             Button btnRendreService = new Button(this, null, com.google.android.material.R.attr.materialButtonStyle);
             btnRendreService.setText("Rendre service");
@@ -220,43 +235,30 @@ public class MainActivity extends AppCompatActivity {
             btnRendreService.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2196F3));
             
             btnRendreService.setOnClickListener(v -> {
-                new AlertDialog.Builder(this)
-                    .setTitle("Rendre service")
-                    .setMessage("Voulez-vous accepter cette demande et aider ce voisin ?")
-                    .setPositiveButton("Oui, j'aide", (dialog, which) -> {
-                        d.setStatut("Validée");
-                        d.setAideur(monNom);
-                        d.setReponse("Réponse de " + monNom + " : J'accepte de vous aider !");
-                        Toast.makeText(this, "Merci ! Le voisin a été prévenu.", Toast.LENGTH_LONG).show();
-                        refreshDemandesVoisins();
-                    })
-                    .setNegativeButton("Annuler", null)
-                    .show();
+                Map<String, Object> data = new HashMap<>();
+                data.put("message", "Je propose mon aide !");
+                data.put("idService", d.getIdDemande());
+                data.put("idMembre_offreur", monId);
+
+                RetrofitClient.getApiService().addReponse(data).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(MainActivity.this, "Proposition envoyée !", Toast.LENGTH_SHORT).show();
+                            chargerDonneesAPI();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {}
+                });
             });
 
             layout.addView(titre);
-            layout.addView(auteur);
-            layout.addView(desc);
             layout.addView(budget);
             layout.addView(btnRendreService);
             card.addView(layout);
-
             containerDemandes.addView(card);
         }
-
-        if (!hasDemandesVoisins) {
-            TextView tvVide = new TextView(this);
-            tvVide.setText("Aucune demande de voisin pour le moment.");
-            tvVide.setPadding(0, 20, 0, 20);
-            containerDemandes.addView(tvVide);
-        }
-    }
-
-    private void initData() {
-        allAnnonces = new ArrayList<>();
-        allAnnonces.add(new Annonce(1, "Tonte de pelouse", "Je propose mes services pour tondre votre pelouse.", 15.0, "22/05/2024", "Jardinage"));
-        allAnnonces.add(new Annonce(2, "Cours de Maths", "Soutien scolaire pour niveau collège.", 20.0, "21/05/2024", "Cours"));
-        allAnnonces.add(new Annonce(3, "Aide déménagement", "Besoin de bras pour porter des cartons.", 10.0, "20/05/2024", "Bricolage"));
     }
 
     private void filterAnnoncesByCategory(String categorie) {

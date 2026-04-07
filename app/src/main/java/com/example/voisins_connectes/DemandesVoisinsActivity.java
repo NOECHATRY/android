@@ -85,7 +85,8 @@ public class DemandesVoisinsActivity extends AppCompatActivity {
             if (d.getAuteur().equals(monNom)) {
                 hasMesDemandes = true;
                 ajouterDemandeSuivi(d);
-            } else if (d.getStatut().equals("En attente")) {
+            } else if (d
+                    .getStatut().equals("En attente")) {
                 hasAutresDemandes = true;
                 ajouterDemandeVoisin(d);
             }

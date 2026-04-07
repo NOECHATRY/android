@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Titre de la demande"
-        android:textColor="#000000"
+        android:textColor="@color/texte_main"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -19,11 +19,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:background="#E3F2FD"
+        android:background="@color/vert_light"
         android:paddingHorizontal="8dp"
         android:paddingVertical="2dp"
         android:text="Catégorie"
-        android:textColor="#1565C0"
+        android:textColor="@color/vert_dark"
         android:textSize="12sp" />
 
     <TextView
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Description :"
-        android:textColor="#333333"
+        android:textColor="@color/texte_main"
         android:textStyle="bold" />
 
     <TextView
@@ -40,27 +40,25 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="Détails de la demande..."
-        android:textColor="#666666" />
+        android:textColor="@color/gris_main" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="horizontal">
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Budget : "
-            android:textColor="#333333"
+            android:textColor="@color/texte_main"
             android:textStyle="bold" />
-
         <TextView
             android:id="@+id/tv_detail_demande_budget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="5 crédits"
-            android:textColor="#000000" />
+            android:textColor="@color/vert_dark" />
     </LinearLayout>
 
     <LinearLayout
@@ -68,28 +66,27 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="horizontal">
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Statut : "
-            android:textColor="#333333"
+            android:textColor="@color/texte_main"
             android:textStyle="bold" />
-
         <TextView
             android:id="@+id/tv_detail_demande_statut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="En attente"
-            android:textColor="#1565C0" />
+            android:textColor="@color/vert_medium" />
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_label_reponse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Réponse de l'offreur :"
-        android:textColor="#333333"
+        android:textColor="@color/texte_main"
         android:textStyle="bold" />
 
     <TextView
@@ -98,7 +95,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="Aucune réponse pour le moment."
-        android:textColor="#666666"
+        android:textColor="@color/gris_main"
         android:textStyle="italic" />
+
+    <!-- NOUVEAU BOUTON D'ACTION DANS LE LAYOUT -->
+    <Button
+        android:id="@+id/btn_dialog_accepter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/vert_dark"
+        android:text="Accepter la mission"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:visibility="gone" />
 
 </LinearLayout>

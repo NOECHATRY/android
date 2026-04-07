@@ -8,6 +8,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -30,19 +33,43 @@ public class RegisterActivity extends AppCompatActivity {
             if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
             } else {
-                // Sauvegarder l'utilisateur dans les préférences
-                SharedPreferences prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
-                prefs.edit().putString("username", username).apply();
-                
-                // Rediriger vers la page d'abonnement (car c'est la première connexion)
-                Intent intent = new Intent(this, AbonnementActivity.class);
-                startActivity(intent);
-                finish();
+                // On crée un membre complet avec les champs attendus par membres.php
+                Membre nouveauMembre = new Membre();
+                nouveauMembre.setNom(username); 
+                nouveauMembre.setPrenom(username); // On met le nom dans prenom aussi pour éviter le champ vide
+                nouveauMembre.setEmail(email);
+                nouveauMembre.setMotDePasse(password);
+                nouveauMembre.setRole("user");
+                nouveauMembre.setTelephone("Non renseigné"); // Valeur par défaut non nulle
+                nouveauMembre.setAdresse("Non renseignée"); // Valeur par défaut non nulle
+
+                RetrofitClient.getApiService().addMembre(nouveauMembre).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(RegisterActivity.this, "Inscription réussie !", Toast.LENGTH_SHORT).show();
+                            SharedPreferences prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
+                            prefs.edit().putString("username", username).apply();
+                            
+                            Intent intent = new Intent(RegisterActivity.this, AbonnementActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            // On affiche le code erreur pour aider au diagnostic
+                            Toast.makeText(RegisterActivity.this, "Erreur API : " + response.code() + ". Vérifiez si l'email existe déjà.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(RegisterActivity.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
         tvLogin.setOnClickListener(v -> {
-            finish(); // Retourner à la page de connexion
+            finish();
         });
     }
 }

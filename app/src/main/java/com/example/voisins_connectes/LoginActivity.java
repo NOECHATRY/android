@@ -8,6 +8,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import java.util.HashMap;
+import java.util.Map;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -15,9 +20,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Vérifier si déjà connecté
         SharedPreferences prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
-        if (prefs.contains("username")) {
+        if (prefs.contains("token")) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
             return;
@@ -25,27 +29,67 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        EditText etUsername = findViewById(R.id.et_login_username);
+        EditText etEmail = findViewById(R.id.et_login_username); // Note: id should ideally be et_login_email
         Button btnLogin = findViewById(R.id.btn_login_confirm);
         TextView tvRegister = findViewById(R.id.tv_go_to_register);
 
+        // On va réutiliser le champ existant pour l'email pour ne pas casser le layout
+        etEmail.setHint("Adresse e-mail");
+
         btnLogin.setOnClickListener(v -> {
-            String username = etUsername.getText().toString().trim();
-            if (username.isEmpty()) {
-                Toast.makeText(this, "Veuillez entrer un nom", Toast.LENGTH_SHORT).show();
-            } else {
-                // Sauvegarder le nom
-                prefs.edit().putString("username", username).apply();
-                
-                // Aller vers l'écran principal
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
+            String email = etEmail.getText().toString().trim();
+            // Pour l'instant, on demande juste l'email pour simplifier, 
+            // mais l'API attend aussi un mot de passe.
+            // On va ajouter un dialogue ou utiliser un mot de passe par défaut pour le test
+            // ou mieux : modifier l'UI pour ajouter le champ mot de passe.
+            
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Veuillez entrer votre e-mail", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            performLogin(email, "1234"); // Mot de passe fictif pour l'instant
         });
 
         tvRegister.setOnClickListener(v -> {
-            // Ouvrir la page d'inscription
             startActivity(new Intent(this, RegisterActivity.class));
+        });
+    }
+
+    // Dans LoginActivity.java, remplacez performLogin par :
+    private void performLogin(String email, String password) {
+        Map<String, String> credentials = new HashMap<>();
+        credentials.put("email", email);
+        credentials.put("motDePasse", password);
+
+        RetrofitClient.getApiService().login("login", credentials).enqueue(new Callback<LoginResponse>() {
+            // ... reste du code
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse loginRes = response.body();
+                    if (loginRes.getError() != null) {
+                        Toast.makeText(LoginActivity.this, loginRes.getError(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        SharedPreferences prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
+                        prefs.edit()
+                            .putString("token", loginRes.getToken())
+                            .putInt("idMembre", loginRes.getInfosMembre().getIdMembre())
+                            .putString("username", loginRes.getInfosMembre().getPrenom())
+                            .apply();
+                        
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
+                    }
+                } else {
+                    Toast.makeText(LoginActivity.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Toast.makeText(LoginActivity.this, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }
