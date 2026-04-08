@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -15,8 +16,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.card.MaterialCardView;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DemandesVoisinsActivity extends AppCompatActivity {
 
@@ -26,6 +29,7 @@ public class DemandesVoisinsActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private SharedPreferences prefs;
     private String monNom;
+    private int monId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +38,13 @@ public class DemandesVoisinsActivity extends AppCompatActivity {
 
         prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
         monNom = prefs.getString("username", "Sophie");
+        monId = prefs.getInt("idMembre", -1);
 
         containerMesDemandes = findViewById(R.id.container_mes_demandes_suivi);
         containerToutesDemandes = findViewById(R.id.container_toutes_demandes);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_demandes);
         bottomNavigationView = findViewById(R.id.bottom_navigation_demandes);
 
-        // Configurer la navigation
         bottomNavigationView.setSelectedItemId(R.id.nav_requests);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -62,192 +66,117 @@ public class DemandesVoisinsActivity extends AppCompatActivity {
             return false;
         });
 
-        refreshListes();
+        loadDemandesFromAPI();
+        swipeRefreshLayout.setOnRefreshListener(this::loadDemandesFromAPI);
+    }
 
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            new Handler().postDelayed(() -> {
-                refreshListes();
+    private void loadDemandesFromAPI() {
+        swipeRefreshLayout.setRefreshing(true);
+        RetrofitClient.getApiService().getServices().enqueue(new Callback<List<Demande>>() {
+            @Override
+            public void onResponse(Call<List<Demande>> call, Response<List<Demande>> response) {
                 swipeRefreshLayout.setRefreshing(false);
-            }, 1000);
+                if (response.isSuccessful() && response.body() != null) {
+                    GestionDemandes.getListeDemandes().clear();
+                    GestionDemandes.getListeDemandes().addAll(response.body());
+                    refreshListes();
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Demande>> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(DemandesVoisinsActivity.this, "Erreur réseau", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     private void refreshListes() {
         containerMesDemandes.removeAllViews();
         containerToutesDemandes.removeAllViews();
-        
         List<Demande> liste = GestionDemandes.getListeDemandes();
 
-        boolean hasMesDemandes = false;
-        boolean hasAutresDemandes = false;
-
         for (Demande d : liste) {
-            if (d.getAuteur().equals(monNom)) {
-                hasMesDemandes = true;
+            if (d.getIdMembre() == monId) {
                 ajouterDemandeSuivi(d);
-            } else if (d
-                    .getStatut().equals("En attente")) {
-                hasAutresDemandes = true;
+            } else if ("publiee".equals(d.getEtatService()) || "en_cours".equals(d.getEtatService())) {
                 ajouterDemandeVoisin(d);
             }
-        }
-
-        if (!hasMesDemandes) {
-            TextView tv = new TextView(this);
-            tv.setText("Vous n'avez publié aucune demande.");
-            tv.setPadding(0, 20, 0, 20);
-            containerMesDemandes.addView(tv);
-        }
-
-        if (!hasAutresDemandes) {
-            TextView tv = new TextView(this);
-            tv.setText("Aucune demande de voisin disponible.");
-            tv.setPadding(0, 20, 0, 20);
-            containerToutesDemandes.addView(tv);
         }
     }
 
     private void ajouterDemandeSuivi(Demande d) {
-        MaterialCardView card = createBaseCard();
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(32, 32, 32, 32);
-
-        TextView titre = new TextView(this);
-        titre.setText(d.getTitre());
-        titre.setTextSize(16);
-        titre.setTypeface(null, android.graphics.Typeface.BOLD);
-        titre.setTextColor(0xFF000000);
-
-        TextView info = new TextView(this);
-        info.setText("Statut : " + d.getStatut());
-        info.setTextColor(d.getStatut().equals("Validée") ? 0xFF2E7D32 : 0xFF1565C0);
-        info.setTextSize(12);
-
-        TextView reponse = new TextView(this);
-        reponse.setText(d.getReponse());
-        reponse.setPadding(0, 8, 0, 0);
-        reponse.setTextColor(0xFF666666);
-
-        layout.addView(titre);
-        layout.addView(info);
-        layout.addView(reponse);
-        card.addView(layout);
+        View cardView = getLayoutInflater().inflate(R.layout.item_demande_card, containerMesDemandes, false);
         
-        card.setOnClickListener(v -> showDetailDemande(d));
-        containerMesDemandes.addView(card);
+        TextView titre = cardView.findViewById(R.id.tv_demande_titre);
+        TextView budget = cardView.findViewById(R.id.tv_demande_budget);
+        ImageView iv = cardView.findViewById(R.id.iv_demande_image);
+
+        titre.setText(d.getTitre());
+        budget.setText("Statut : " + d.getEtatService());
+        iv.setVisibility(View.GONE);
+
+        cardView.setOnClickListener(v -> showDetailDemande(d));
+        containerMesDemandes.addView(cardView);
     }
 
     private void ajouterDemandeVoisin(Demande d) {
-        // Design type accueil avec image
-        MaterialCardView card = createBaseCard();
-        LinearLayout mainLayout = new LinearLayout(this);
-        mainLayout.setOrientation(LinearLayout.VERTICAL);
-
-        // Image comme sur l'accueil
-        ImageView iv = new ImageView(this);
-        iv.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 400));
-        iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        View cardView = getLayoutInflater().inflate(R.layout.item_demande_card, containerToutesDemandes, false);
         
-        if ("Jardinage".equalsIgnoreCase(d.getCategorie())) iv.setImageResource(R.drawable.jardinage);
-        else if ("Bricolage".equalsIgnoreCase(d.getCategorie())) iv.setImageResource(R.drawable.bricolage);
-        else if ("Cours".equalsIgnoreCase(d.getCategorie())) iv.setImageResource(R.drawable.cours);
-        else iv.setImageResource(android.R.drawable.ic_menu_gallery);
+        TextView titre = cardView.findViewById(R.id.tv_demande_titre);
+        TextView budget = cardView.findViewById(R.id.tv_demande_budget);
+        ImageView iv = cardView.findViewById(R.id.iv_demande_image);
 
-        mainLayout.addView(iv);
-
-        LinearLayout infoLayout = new LinearLayout(this);
-        infoLayout.setOrientation(LinearLayout.VERTICAL);
-        infoLayout.setPadding(32, 32, 32, 32);
-
-        TextView titre = new TextView(this);
         titre.setText(d.getTitre());
-        titre.setTextSize(18);
-        titre.setTypeface(null, android.graphics.Typeface.BOLD);
-        titre.setTextColor(0xFF000000);
-
-        TextView auteur = new TextView(this);
-        auteur.setText("Voisin : " + d.getAuteur() + " • " + d.getCategorie());
-        auteur.setTextSize(12);
-        auteur.setTextColor(0xFF1565C0);
-
-        TextView budget = new TextView(this);
         budget.setText(d.getBudget() + " crédits");
-        budget.setTextColor(0xFF666666);
-        budget.setTextSize(13);
-        budget.setPadding(0, 4, 0, 16);
 
-        Button btnRendreService = new Button(this, null, com.google.android.material.R.attr.materialButtonStyle);
-        btnRendreService.setText("Rendre service");
-        btnRendreService.setAllCaps(false);
-        btnRendreService.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2196F3));
-        
-        btnRendreService.setOnClickListener(v -> {
-            new AlertDialog.Builder(this)
-                .setTitle("Aider un voisin")
-                .setMessage("Acceptez-vous d'aider " + d.getAuteur() + " pour sa demande : " + d.getTitre() + " ?")
-                .setPositiveButton("Oui, j'aide", (dialog, which) -> {
-                    accepterMission(d);
-                })
-                .setNegativeButton("Annuler", null).show();
-        });
+        setCategoryImage(iv, d.getIdCategorie());
 
-        infoLayout.addView(titre);
-        infoLayout.addView(auteur);
-        infoLayout.addView(budget);
-        infoLayout.addView(btnRendreService);
-        mainLayout.addView(infoLayout);
-        
-        card.addView(mainLayout);
-        card.setOnClickListener(v -> showDetailDemande(d));
-        containerToutesDemandes.addView(card);
+        cardView.setOnClickListener(v -> showDetailDemande(d));
+        containerToutesDemandes.addView(cardView);
     }
 
-    private void accepterMission(Demande d) {
-        d.setStatut("Validée");
-        d.setAideur(monNom);
-        d.setReponse("Réponse de " + monNom + " : J'ai accepté votre demande !");
-        Toast.makeText(this, "Mission acceptée ! Retrouvez-la dans votre profil.", Toast.LENGTH_SHORT).show();
-        refreshListes();
+    private void setCategoryImage(ImageView iv, int idCat) {
+        if (idCat == 1) iv.setImageResource(R.drawable.informatique);
+        else if (idCat == 2) iv.setImageResource(R.drawable.bricolage);
+        else if (idCat == 3) iv.setImageResource(R.drawable.cours);
+        else if (idCat == 4) iv.setImageResource(R.drawable.jardinage);
+        else iv.setImageResource(android.R.drawable.ic_menu_gallery);
     }
 
     private void showDetailDemande(Demande d) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_detail_demande, null);
 
+        ImageView ivDetail = dialogView.findViewById(R.id.iv_detail_demande_image);
+        setCategoryImage(ivDetail, d.getIdCategorie());
+
         ((TextView) dialogView.findViewById(R.id.tv_detail_demande_titre)).setText(d.getTitre());
-        ((TextView) dialogView.findViewById(R.id.tv_detail_demande_categorie)).setText(d.getCategorie());
         ((TextView) dialogView.findViewById(R.id.tv_detail_demande_description)).setText(d.getDescription());
         ((TextView) dialogView.findViewById(R.id.tv_detail_demande_budget)).setText(d.getBudget() + " crédits");
-        ((TextView) dialogView.findViewById(R.id.tv_detail_demande_statut)).setText(d.getStatut());
-        ((TextView) dialogView.findViewById(R.id.tv_detail_demande_reponse)).setText(d.getReponse());
+        ((TextView) dialogView.findViewById(R.id.tv_detail_demande_statut)).setText(d.getEtatService());
+        
+        TextView tvReponse = dialogView.findViewById(R.id.tv_detail_demande_reponse);
+        tvReponse.setText(d.getReponse() != null ? d.getReponse() : "Aucune réponse pour le moment.");
 
         builder.setView(dialogView);
         builder.setPositiveButton("Fermer", null);
 
-        // Ajout du bouton "Accepter" si c'est une demande d'un voisin et qu'elle est en attente
-        if (!d.getAuteur().equals(monNom) && d.getStatut().equals("En attente")) {
-            builder.setNeutralButton("Accepter la mission", (dialog, which) -> {
-                accepterMission(d);
-            });
+        Button btnAccepter = dialogView.findViewById(R.id.btn_dialog_accepter);
+        if (d.getIdMembre() != monId && ("publiee".equals(d.getEtatService()) || "en_cours".equals(d.getEtatService()))) {
+            btnAccepter.setVisibility(View.VISIBLE);
+            btnAccepter.setOnClickListener(v -> accepterMission(d));
+        } else {
+            btnAccepter.setVisibility(View.GONE);
         }
 
         builder.show();
     }
 
-    private MaterialCardView createBaseCard() {
-        MaterialCardView card = new MaterialCardView(this);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 0, 0, 24);
-        card.setLayoutParams(params);
-        card.setRadius(32f);
-        card.setCardElevation(4f);
-        card.setStrokeColor(0xFFEEEEEE);
-        card.setStrokeWidth(2);
-        card.setClickable(true);
-        card.setFocusable(true);
-        return card;
+    private void accepterMission(Demande d) {
+        d.setEtatService("validee");
+        d.setAideur(monNom);
+        d.setReponse("Réponse de " + monNom + " : J'accepte de vous aider !");
+        Toast.makeText(this, "Mission acceptée ! Retrouvez-la dans votre profil.", Toast.LENGTH_SHORT).show();
+        refreshListes();
     }
 }

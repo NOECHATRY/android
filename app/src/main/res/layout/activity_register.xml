@@ -44,7 +44,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nom d'utilisateur"
+                android:hint="Identifiant"
                 android:textColorHint="@color/gris_main"
                 app:boxBackgroundColor="@color/white"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">

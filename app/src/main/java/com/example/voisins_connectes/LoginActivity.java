@@ -20,35 +20,25 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        SharedPreferences prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
-        if (prefs.contains("token")) {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-            return;
-        }
+        // Supprimé : la vérification automatique du token pour forcer la connexion à chaque fois
 
         setContentView(R.layout.activity_login);
 
-        EditText etEmail = findViewById(R.id.et_login_username); // Note: id should ideally be et_login_email
+        EditText etEmail = findViewById(R.id.et_login_username);
+        EditText etPassword = findViewById(R.id.et_login_password);
         Button btnLogin = findViewById(R.id.btn_login_confirm);
         TextView tvRegister = findViewById(R.id.tv_go_to_register);
 
-        // On va réutiliser le champ existant pour l'email pour ne pas casser le layout
-        etEmail.setHint("Adresse e-mail");
-
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
-            // Pour l'instant, on demande juste l'email pour simplifier, 
-            // mais l'API attend aussi un mot de passe.
-            // On va ajouter un dialogue ou utiliser un mot de passe par défaut pour le test
-            // ou mieux : modifier l'UI pour ajouter le champ mot de passe.
+            String password = etPassword.getText().toString().trim();
             
-            if (email.isEmpty()) {
-                Toast.makeText(this, "Veuillez entrer votre e-mail", Toast.LENGTH_SHORT).show();
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            performLogin(email, "1234"); // Mot de passe fictif pour l'instant
+            performLogin(email, password);
         });
 
         tvRegister.setOnClickListener(v -> {
@@ -56,14 +46,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // Dans LoginActivity.java, remplacez performLogin par :
     private void performLogin(String email, String password) {
         Map<String, String> credentials = new HashMap<>();
         credentials.put("email", email);
         credentials.put("motDePasse", password);
 
         RetrofitClient.getApiService().login("login", credentials).enqueue(new Callback<LoginResponse>() {
-            // ... reste du code
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -82,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     }
                 } else {
-                    Toast.makeText(LoginActivity.this, "Erreur de connexion", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Identifiant ou mot de passe incorrect", Toast.LENGTH_SHORT).show();
                 }
             }
 

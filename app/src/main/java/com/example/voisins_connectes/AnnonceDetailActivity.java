@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.chip.Chip;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,12 +109,18 @@ public class AnnonceDetailActivity extends AppCompatActivity {
         tvUserName.setText(annonce.getUserName());
         tvUserStats.setText(String.format("★ %.1f (%d avis)", annonce.getUserRating(), annonce.getNbAvis()));
 
-        if ("Jardinage".equalsIgnoreCase(annonce.getCategorie())) {
+        // Mise à jour des images selon la catégorie pour le résumé
+        String cat = annonce.getCategorie();
+        if ("Jardinage".equalsIgnoreCase(cat)) {
             ivHeader.setImageResource(R.drawable.jardinage);
-        } else if ("Bricolage".equalsIgnoreCase(annonce.getCategorie())) {
+        } else if ("Bricolage".equalsIgnoreCase(cat)) {
             ivHeader.setImageResource(R.drawable.bricolage);
-        } else if ("Cours".equalsIgnoreCase(annonce.getCategorie())) {
+        } else if ("Cours".equalsIgnoreCase(cat) || "Cours particuliers".equalsIgnoreCase(cat)) {
             ivHeader.setImageResource(R.drawable.cours);
+        } else if ("Informatique".equalsIgnoreCase(cat)) {
+            ivHeader.setImageResource(R.drawable.informatique);
+        } else {
+            ivHeader.setImageResource(android.R.drawable.ic_menu_gallery);
         }
     }
 
@@ -127,11 +132,10 @@ public class AnnonceDetailActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         table.setStretchAllColumns(true);
-        table.setBackgroundColor(Color.parseColor("#4DB6AC")); // Couleur turquoise du cadre
+        table.setBackgroundColor(Color.parseColor("#4DB6AC"));
 
         String[] jours = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
         
-        // En-tête
         TableRow headerRow = new TableRow(this);
         headerRow.setPadding(2, 2, 2, 2);
         
@@ -143,7 +147,6 @@ public class AnnonceDetailActivity extends AppCompatActivity {
         }
         table.addView(headerRow);
 
-        // Données des horaires
         Map<String, List<String>> planning = new HashMap<>();
         for (String jour : jours) planning.put(jour, new ArrayList<>());
         
@@ -154,7 +157,6 @@ public class AnnonceDetailActivity extends AppCompatActivity {
             }
         }
 
-        // Trouver le nombre max d'horaires pour un jour
         int maxSlots = 1;
         for (List<String> slots : planning.values()) {
             if (slots.size() > maxSlots) maxSlots = slots.size();
@@ -164,7 +166,7 @@ public class AnnonceDetailActivity extends AppCompatActivity {
             TableRow row = new TableRow(this);
             row.setPadding(2, 2, 2, 2);
             
-            row.addView(createTableCell("-", false)); // Colonne "Heure" vide ou avec index
+            row.addView(createTableCell("-", false));
             
             for (String jour : jours) {
                 List<String> slots = planning.get(jour);

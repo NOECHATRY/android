@@ -34,18 +34,20 @@ public class AnnonceAdapter extends RecyclerView.Adapter<AnnonceAdapter.AnnonceV
         holder.tvDescription.setText(annonce.getDescription());
         holder.chipCategorie.setText(annonce.getCategorie());
 
-        // Gestion de l'image selon la catégorie
-        if ("Jardinage".equalsIgnoreCase(annonce.getCategorie())) {
+        // Gestion de l'image selon la catégorie (Uniformisée avec le site)
+        String cat = annonce.getCategorie();
+        if ("Jardinage".equalsIgnoreCase(cat)) {
             holder.ivAnnonce.setImageResource(R.drawable.jardinage);
-        } else if ("Bricolage".equalsIgnoreCase(annonce.getCategorie())) {
+        } else if ("Bricolage".equalsIgnoreCase(cat)) {
             holder.ivAnnonce.setImageResource(R.drawable.bricolage);
-        } else if ("Cours".equalsIgnoreCase(annonce.getCategorie())) {
+        } else if ("Cours".equalsIgnoreCase(cat) || "Cours particuliers".equalsIgnoreCase(cat)) {
             holder.ivAnnonce.setImageResource(R.drawable.cours);
+        } else if ("Informatique".equalsIgnoreCase(cat)) {
+            holder.ivAnnonce.setImageResource(R.drawable.informatique);
         } else {
             holder.ivAnnonce.setImageResource(android.R.drawable.ic_menu_gallery);
         }
 
-        // Affichage des horaires si besoin (caché par défaut dans le nouveau design)
         if (annonce.getHoraireReserve() != null) {
             holder.tvHoraires.setVisibility(View.VISIBLE);
             holder.tvHoraires.setText("✅ Réservé : " + annonce.getHoraireReserve());
@@ -53,7 +55,6 @@ public class AnnonceAdapter extends RecyclerView.Adapter<AnnonceAdapter.AnnonceV
             holder.tvHoraires.setVisibility(View.GONE);
         }
 
-        // Gestion du clic pour ouvrir les détails
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), AnnonceDetailActivity.class);
             intent.putExtra("annonce", annonce);

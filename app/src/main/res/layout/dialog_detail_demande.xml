@@ -5,6 +5,14 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <ImageView
+        android:id="@+id/iv_detail_demande_image"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginBottom="16dp"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_gallery" />
+
     <TextView
         android:id="@+id/tv_detail_demande_titre"
         android:layout_width="match_parent"

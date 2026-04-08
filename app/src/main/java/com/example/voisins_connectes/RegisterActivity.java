@@ -19,44 +19,38 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        EditText etUsername = findViewById(R.id.et_register_username);
+        EditText etIdentifiant = findViewById(R.id.et_register_username);
         EditText etEmail = findViewById(R.id.et_register_email);
         EditText etPassword = findViewById(R.id.et_register_password);
         Button btnRegister = findViewById(R.id.btn_register_confirm);
         TextView tvLogin = findViewById(R.id.tv_back_to_login);
 
         btnRegister.setOnClickListener(v -> {
-            String username = etUsername.getText().toString().trim();
+            String identifiant = etIdentifiant.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            if (identifiant.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
             } else {
-                // On crée un membre complet avec les champs attendus par membres.php
+                // On enregistre l'Identifiant dans le champ 'email' car c'est lui qui sert au login
                 Membre nouveauMembre = new Membre();
-                nouveauMembre.setNom(username); 
-                nouveauMembre.setPrenom(username); // On met le nom dans prenom aussi pour éviter le champ vide
-                nouveauMembre.setEmail(email);
+                nouveauMembre.setEmail(identifiant); 
+                nouveauMembre.setNom(email); // On stocke l'email réel dans le nom
+                nouveauMembre.setPrenom("");
                 nouveauMembre.setMotDePasse(password);
-                nouveauMembre.setRole("user");
-                nouveauMembre.setTelephone("Non renseigné"); // Valeur par défaut non nulle
-                nouveauMembre.setAdresse("Non renseignée"); // Valeur par défaut non nulle
+                nouveauMembre.setRole("demandeur");
+                nouveauMembre.setTelephone("Non renseigné");
+                nouveauMembre.setAdresse("Non renseignée");
 
                 RetrofitClient.getApiService().addMembre(nouveauMembre).enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, "Inscription réussie !", Toast.LENGTH_SHORT).show();
-                            SharedPreferences prefs = getSharedPreferences("VoisinsConnectes", MODE_PRIVATE);
-                            prefs.edit().putString("username", username).apply();
-                            
-                            Intent intent = new Intent(RegisterActivity.this, AbonnementActivity.class);
-                            startActivity(intent);
-                            finish();
+                            Toast.makeText(RegisterActivity.this, "Compte créé ! Connectez-vous avec votre identifiant.", Toast.LENGTH_LONG).show();
+                            finish(); // Retour à la page de login
                         } else {
-                            // On affiche le code erreur pour aider au diagnostic
-                            Toast.makeText(RegisterActivity.this, "Erreur API : " + response.code() + ". Vérifiez si l'email existe déjà.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(RegisterActivity.this, "Erreur : cet identifiant est peut-être déjà pris.", Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -68,8 +62,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        tvLogin.setOnClickListener(v -> {
-            finish();
-        });
+        tvLogin.setOnClickListener(v -> finish());
     }
 }
