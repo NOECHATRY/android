@@ -42,7 +42,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/subtitle_home"
+                        android:text="Gérez vos publications"
                         android:textColor="@color/gris_main"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -97,7 +97,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Catégories (Chips) reliées à la recherche -->
+            <!-- Catégories -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,38 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:singleSelection="true">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_tout"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:checked="true"
-                        android:text="Tout"
-                        app:chipBackgroundColor="@color/vert_medium"
-                        android:textColor="@color/white" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_bricolage"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/category_diy" />
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_jardinage"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/category_gardening" />
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_cours"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/category_lessons" />
+                    <!-- Les catégories seront ajoutées dynamiquement -->
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
         </LinearLayout>
@@ -161,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Section Services Populaires -->
+                <!-- SECTION : Mes Demandes -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -171,52 +140,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Services populaires"
-                        android:textColor="@color/texte_main"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tv_voir_tout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="Voir tout →"
-                        android:textColor="@color/vert_dark"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_voisins"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:paddingStart="16dp"
-                    android:clipToPadding="false"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_annonce" />
-
-                <!-- SECTION : Demandes des voisins (Rendre service) -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="16dp"
-                    android:layout_marginTop="24dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Demandes des voisins"
+                        android:text="Mes Demandes"
                         android:textColor="@color/texte_main"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
 
+                <!-- On utilise un container vertical pour les demandes de l'utilisateur -->
                 <LinearLayout
-                    android:id="@+id/container_demandes_accueil"
+                    android:id="@+id/container_mes_demandes_accueil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"

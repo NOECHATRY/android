@@ -3,35 +3,35 @@ package com.example.voisins_connectes;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private AnnonceAdapter adapter;
-    private final List<Annonce> allAnnonces = new ArrayList<>();
     private ChipGroup chipGroup;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayout containerMesDemandes;
     private SharedPreferences prefs;
+    private int monId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,25 +43,19 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
+        monId = prefs.getInt("idMembre", -1);
 
         setContentView(R.layout.activity_main);
 
-        // Initialisation des vues
-        EditText etRecherche = findViewById(R.id.et_recherche);
         chipGroup = findViewById(R.id.chip_group_categories);
         TextView tvBienvenue = findViewById(R.id.tv_Bienvenue);
-        recyclerView = findViewById(R.id.rv_voisins);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh);
+        containerMesDemandes = findViewById(R.id.container_mes_demandes_accueil);
         FloatingActionButton fabPublier = findViewById(R.id.fab_publier);
 
         tvBienvenue.setText("Bonjour, " + prefs.getString("username", "Voisin") + " !");
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        adapter = new AnnonceAdapter(new ArrayList<>());
-        recyclerView.setAdapter(adapter);
-
-        // Charger les données
         chargerCategoriesAPI();
         chargerDonneesAPI();
 
@@ -70,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
             chargerDonneesAPI();
         });
 
-        // Navigation
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -120,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
         chip.setText(label);
         chip.setCheckable(true);
         if (isDefault) chip.setChecked(true);
-        chip.setOnClickListener(v -> filterAnnoncesByCategory(label));
         chipGroup.addView(chip);
     }
 
@@ -129,23 +121,12 @@ public class MainActivity extends AppCompatActivity {
         RetrofitClient.getApiService().getServices().enqueue(new Callback<List<Demande>>() {
             @Override
             public void onResponse(Call<List<Demande>> call, Response<List<Demande>> response) {
-                swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    allAnnonces.clear();
-                    // On garde une copie pour l'onglet demandes
                     GestionDemandes.getListeDemandes().clear();
                     GestionDemandes.getListeDemandes().addAll(response.body());
-
-                    for (Demande d : response.body()) {
-                        // Sur l'accueil on affiche les services 'public' et 'publiee'
-                        if ("public".equals(d.getTypeService()) && "publiee".equals(d.getEtatService())) {
-                            Annonce a = new Annonce(d.getIdDemande(), d.getTitre(), d.getDescription(), 
-                                                  d.getBudget(), d.getDatePublication(), getCategoryName(d.getIdCategorie()));
-                            allAnnonces.add(a);
-                        }
-                    }
-                    adapter.setAnnonces(new ArrayList<>(allAnnonces));
+                    refreshMesDemandes();
                 }
+                swipeRefreshLayout.setRefreshing(false);
             }
             @Override public void onFailure(Call<List<Demande>> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
@@ -153,33 +134,83 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private String getCategoryName(int id) {
-        if (id == 1) return "Informatique";
-        if (id == 2) return "Bricolage";
-        if (id == 3) return "Cours";
-        if (id == 4) return "Jardinage";
-        return "Autre";
-    }
+    private void refreshMesDemandes() {
+        containerMesDemandes.removeAllViews();
+        List<Demande> liste = GestionDemandes.getListeDemandes();
+        boolean hasDemandes = false;
 
-    private void filterAnnoncesByCategory(String cat) {
-        List<Annonce> filtered = new ArrayList<>();
-        if ("Tout".equals(cat)) filtered.addAll(allAnnonces);
-        else {
-            for (Annonce a : allAnnonces) {
-                if (cat.equalsIgnoreCase(a.getCategorie())) filtered.add(a);
+        for (Demande d : liste) {
+            if (d.getIdMembre() == monId) {
+                hasDemandes = true;
+                ajouterCardMesDemandes(d);
             }
         }
-        adapter.setAnnonces(filtered);
+
+        if (!hasDemandes) {
+            TextView tv = new TextView(this);
+            tv.setText("Vous n'avez pas encore publié de demande.");
+            tv.setPadding(0, 20, 0, 20);
+            containerMesDemandes.addView(tv);
+        }
     }
 
-    private void filterAnnoncesByText(String text) {
-        List<Annonce> filtered = new ArrayList<>();
-        if (text.isEmpty()) filtered.addAll(allAnnonces);
-        else {
-            for (Annonce a : allAnnonces) {
-                if (a.getTitre().toLowerCase().contains(text.toLowerCase())) filtered.add(a);
+    private void ajouterCardMesDemandes(Demande d) {
+        View cardView = getLayoutInflater().inflate(R.layout.item_demande_card, containerMesDemandes, false);
+        TextView titre = cardView.findViewById(R.id.tv_demande_titre);
+        TextView budget = cardView.findViewById(R.id.tv_demande_budget);
+        ImageView iv = cardView.findViewById(R.id.iv_demande_image);
+
+        titre.setText(d.getTitre());
+        budget.setText(d.getBudget() + " crédits • Statut : " + d.getEtatService());
+        
+        if (d.getIdCategorie() == 1) iv.setImageResource(R.drawable.informatique);
+        else if (d.getIdCategorie() == 2) iv.setImageResource(R.drawable.bricolage);
+        else if (d.getIdCategorie() == 3) iv.setImageResource(R.drawable.cours);
+        else if (d.getIdCategorie() == 4) iv.setImageResource(R.drawable.jardinage);
+
+        cardView.setOnClickListener(v -> showOptionsDemande(d));
+        containerMesDemandes.addView(cardView);
+    }
+
+    private void showOptionsDemande(Demande d) {
+        String[] options = {"Modifier", "Supprimer", "Fermer"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(d.getTitre());
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                Intent intent = new Intent(this, PublierDemandeActivity.class);
+                intent.putExtra("demande", d);
+                startActivity(intent);
+            } else if (which == 1) {
+                confirmerSuppression(d);
             }
-        }
-        adapter.setAnnonces(filtered);
+        });
+        builder.show();
+    }
+
+    private void confirmerSuppression(Demande d) {
+        new AlertDialog.Builder(this)
+            .setTitle("Supprimer la demande")
+            .setMessage("Voulez-vous vraiment supprimer définitivement cette demande ?")
+            .setPositiveButton("Supprimer", (dialog, which) -> {
+                Map<String, Integer> data = new HashMap<>();
+                data.put("id", d.getIdDemande());
+                
+                RetrofitClient.getApiService().deleteService(data).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(MainActivity.this, "Demande supprimée", Toast.LENGTH_SHORT).show();
+                            chargerDonneesAPI();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Erreur suppression : " + response.code(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(MainActivity.this, "Erreur réseau", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            })
+            .setNegativeButton("Annuler", null).show();
     }
 }

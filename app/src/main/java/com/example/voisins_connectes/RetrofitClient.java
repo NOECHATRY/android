@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     // On pointe directement vers le dossier final contenant les scripts PHP
-    private static final String BASE_URL = "http://10.174.97.195/voisinconnect_api/voisinconnect_api/api/";
+    private static final String BASE_URL = "http://10.174.97.111/voisinconnect_api/voisinconnect_api/api/";
     private static Retrofit retrofit = null;
 
     public static ApiService getApiService() {

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    app:cardCornerRadius="32dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header -->
+        <LinearLayout
+            android:id="@+id/ll_forfait_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:gravity="center"
+            android:background="@color/vert_light">
+
+            <TextView
+                android:id="@+id/tv_forfait_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GRATUIT"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:textColor="@color/vert_dark" />
+
+            <TextView
+                android:id="@+id/tv_forfait_nom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Standard"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/texte_main" />
+
+            <TextView
+                android:id="@+id/tv_forfait_prix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="0,00 €"
+                android:textSize="42sp"
+                android:textStyle="bold"
+                android:textColor="@color/vert_dark" />
+
+            <TextView
+                android:id="@+id/tv_forfait_duree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏱ Durée : 30 jour(s)"
+                android:textSize="12sp"
+                android:textColor="@color/gris_main" />
+        </LinearLayout>
+
+        <!-- Features -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Section Proposer -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/vert_light"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="🔧 Proposer des services"
+                android:textColor="@color/texte_main"
+                android:textStyle="bold"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_fonc_parametrage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="✓ Paramétrage"
+                android:textColor="@color/texte_main" />
+
+            <TextView
+                android:id="@+id/tv_fonc_perimetre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="✓ Périmètre d'intervention"
+                android:textColor="@color/texte_main" />
+
+            <TextView
+                android:id="@+id/tv_fonc_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="✓ Notifications"
+                android:textColor="@color/texte_main" />
+
+            <!-- Section Répondre -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@color/vert_light"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="💰 Répondre aux demandes"
+                android:textColor="@color/texte_main"
+                android:textStyle="bold"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_fonc_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="✓ Location de matériel"
+                android:textColor="@color/texte_main" />
+
+            <TextView
+                android:id="@+id/tv_fonc_prestation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="✓ Prestation de service"
+                android:textColor="@color/texte_main" />
+
+            <!-- Section Profil -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@color/vert_light"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="👤 Profil utilisateur"
+                android:textColor="@color/texte_main"
+                android:textStyle="bold"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_fonc_numero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="✓ Numéro de téléphone"
+                android:textColor="@color/texte_main" />
+
+            <TextView
+                android:id="@+id/tv_fonc_photos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="✓ Photos des réalisations"
+                android:textColor="@color/texte_main" />
+
+            <!-- Section Assistance -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@color/vert_light"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="🎧 Assistance"
+                android:textColor="@color/texte_main"
+                android:textStyle="bold"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_fonc_accompagnement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:text="✓ Accompagnement prioritaire"
+                android:textColor="@color/texte_main" />
+
+            <Button
+                android:id="@+id/btn_forfait_choisir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Choisir cette offre"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/vert_dark"
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

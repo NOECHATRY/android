@@ -5,7 +5,9 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 public interface ApiService {
@@ -31,20 +33,34 @@ public interface ApiService {
     @GET("forfaits.php")
     Call<List<Forfait>> getForfaits();
 
-    @POST("forfaits.php")
-    Call<Void> chooseForfait(
-            @Query("action") String action,
-            @Body Map<String, Integer> data
-    );
+    // --- ADHESIONS ---
+    @POST("adhesions.php")
+    Call<Void> addAdhesion(@Body Map<String, Object> data);
 
-    // --- SERVICES ---
+    // --- SERVICES (Annonces / Demandes) ---
     @GET("services.php")
     Call<List<Demande>> getServices();
 
     @POST("services.php")
     Call<Void> addService(@Body Demande demande);
 
+    @PUT("services.php")
+    Call<Void> updateService(@Body Demande demande);
+
+    // Suppression via le corps JSON car Laragon/PHP attend un body pour le DELETE
+    @HTTP(method = "DELETE", path = "services.php", hasBody = true)
+    Call<Void> deleteService(@Body Map<String, Integer> data);
+
+    @POST("services.php")
+    Call<Void> validateService(
+            @Query("action") String action,
+            @Body Map<String, Integer> data
+    );
+
     // --- REPONSES ---
+    @GET("reponses.php")
+    Call<List<Reponse>> getReponses();
+
     @POST("reponses.php")
     Call<Void> addReponse(@Body Map<String, Object> data);
 

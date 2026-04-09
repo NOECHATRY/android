@@ -3,7 +3,6 @@ package com.example.voisins_connectes;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -98,7 +99,7 @@ public class DemandesVoisinsActivity extends AppCompatActivity {
         for (Demande d : liste) {
             if (d.getIdMembre() == monId) {
                 ajouterDemandeSuivi(d);
-            } else if ("publiee".equals(d.getEtatService()) || "en_cours".equals(d.getEtatService())) {
+            } else if ("publiee".equals(d.getEtatService())) {
                 ajouterDemandeVoisin(d);
             }
         }
@@ -106,7 +107,6 @@ public class DemandesVoisinsActivity extends AppCompatActivity {
 
     private void ajouterDemandeSuivi(Demande d) {
         View cardView = getLayoutInflater().inflate(R.layout.item_demande_card, containerMesDemandes, false);
-        
         TextView titre = cardView.findViewById(R.id.tv_demande_titre);
         TextView budget = cardView.findViewById(R.id.tv_demande_budget);
         ImageView iv = cardView.findViewById(R.id.iv_demande_image);
@@ -121,14 +121,12 @@ public class DemandesVoisinsActivity extends AppCompatActivity {
 
     private void ajouterDemandeVoisin(Demande d) {
         View cardView = getLayoutInflater().inflate(R.layout.item_demande_card, containerToutesDemandes, false);
-        
         TextView titre = cardView.findViewById(R.id.tv_demande_titre);
         TextView budget = cardView.findViewById(R.id.tv_demande_budget);
         ImageView iv = cardView.findViewById(R.id.iv_demande_image);
 
         titre.setText(d.getTitre());
         budget.setText(d.getBudget() + " crédits");
-
         setCategoryImage(iv, d.getIdCategorie());
 
         cardView.setOnClickListener(v -> showDetailDemande(d));
@@ -162,7 +160,7 @@ public class DemandesVoisinsActivity extends AppCompatActivity {
         builder.setPositiveButton("Fermer", null);
 
         Button btnAccepter = dialogView.findViewById(R.id.btn_dialog_accepter);
-        if (d.getIdMembre() != monId && ("publiee".equals(d.getEtatService()) || "en_cours".equals(d.getEtatService()))) {
+        if (d.getIdMembre() != monId && "publiee".equals(d.getEtatService())) {
             btnAccepter.setVisibility(View.VISIBLE);
             btnAccepter.setOnClickListener(v -> accepterMission(d));
         } else {
@@ -173,10 +171,40 @@ public class DemandesVoisinsActivity extends AppCompatActivity {
     }
 
     private void accepterMission(Demande d) {
-        d.setEtatService("validee");
-        d.setAideur(monNom);
-        d.setReponse("Réponse de " + monNom + " : J'accepte de vous aider !");
-        Toast.makeText(this, "Mission acceptée ! Retrouvez-la dans votre profil.", Toast.LENGTH_SHORT).show();
-        refreshListes();
+        // 1. Ajouter une réponse dans la table 'reponse'
+        Map<String, Object> reponseData = new HashMap<>();
+        reponseData.put("message", "J'accepte votre demande !");
+        reponseData.put("idMembre_offreur", monId);
+        reponseData.put("idService", d.getIdDemande());
+        reponseData.put("statutReponse", "acceptee");
+
+        RetrofitClient.getApiService().addReponse(reponseData).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    // 2. Mettre à jour l'état du service vers 'validee'
+                    Map<String, Integer> validateData = new HashMap<>();
+                    validateData.put("idService", d.getIdDemande());
+                    
+                    RetrofitClient.getApiService().validateService("validate", validateData).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            Toast.makeText(DemandesVoisinsActivity.this, "Mission acceptée ! Retrouvez-la dans votre profil.", Toast.LENGTH_SHORT).show();
+                            loadDemandesFromAPI(); // Refresh UI
+                        }
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            loadDemandesFromAPI();
+                        }
+                    });
+                } else {
+                    Toast.makeText(DemandesVoisinsActivity.this, "Erreur lors de l'acceptation", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(DemandesVoisinsActivity.this, "Erreur réseau", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
